@@ -502,306 +502,306 @@
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize tasks from localStorage or create empty array
-        let tasks = JSON.parse(localStorage.getItem('apokalistTasks')) || [];
-        let currentSort = 'date-asc';
+<!--<script>-->
+<!--    document.addEventListener('DOMContentLoaded', function() {-->
+<!--        // Initialize tasks from localStorage or create empty array-->
+<!--        let tasks = JSON.parse(localStorage.getItem('apokalistTasks')) || [];-->
+<!--        let currentSort = 'date-asc';-->
 
-        // DOM Elements
-        const taskForm = document.getElementById('add-task-form');
-        const taskList = document.getElementById('task-list');
-        const taskCounter = document.getElementById('task-counter');
-        const emptyState = document.getElementById('empty-state');
-        const addFirstTaskBtn = document.getElementById('add-first-task');
-        const sortSelect = document.getElementById('sort-tasks');
-        const editModal = document.getElementById('edit-modal');
-        const editForm = document.getElementById('edit-task-form');
-        const closeEditModalBtn = document.getElementById('close-edit-modal');
-        const cancelEditBtn = document.getElementById('cancel-edit');
-        const countdownEl = document.getElementById('countdown');
+<!--        // DOM Elements-->
+<!--        const taskForm = document.getElementById('add-task-form');-->
+<!--        const taskList = document.getElementById('task-list');-->
+<!--        const taskCounter = document.getElementById('task-counter');-->
+<!--        const emptyState = document.getElementById('empty-state');-->
+<!--        const addFirstTaskBtn = document.getElementById('add-first-task');-->
+<!--        const sortSelect = document.getElementById('sort-tasks');-->
+<!--        const editModal = document.getElementById('edit-modal');-->
+<!--        const editForm = document.getElementById('edit-task-form');-->
+<!--        const closeEditModalBtn = document.getElementById('close-edit-modal');-->
+<!--        const cancelEditBtn = document.getElementById('cancel-edit');-->
+<!--        const countdownEl = document.getElementById('countdown');-->
 
-        // Set a random apocalyptic countdown
-        function setRandomCountdown() {
-            const now = new Date();
-            const randomDays = Math.floor(Math.random() * 365) + 1;
-            const randomHours = Math.floor(Math.random() * 24);
-            const randomMinutes = Math.floor(Math.random() * 60);
-            const randomSeconds = Math.floor(Math.random() * 60);
+<!--        // Set a random apocalyptic countdown-->
+<!--        function setRandomCountdown() {-->
+<!--            const now = new Date();-->
+<!--            const randomDays = Math.floor(Math.random() * 365) + 1;-->
+<!--            const randomHours = Math.floor(Math.random() * 24);-->
+<!--            const randomMinutes = Math.floor(Math.random() * 60);-->
+<!--            const randomSeconds = Math.floor(Math.random() * 60);-->
 
-            const endTime = new Date(now.getTime() +
-                (randomDays * 24 * 60 * 60 * 1000) +
-                (randomHours * 60 * 60 * 1000) +
-                (randomMinutes * 60 * 1000) +
-                (randomSeconds * 1000));
+<!--            const endTime = new Date(now.getTime() +-->
+<!--                (randomDays * 24 * 60 * 60 * 1000) +-->
+<!--                (randomHours * 60 * 60 * 1000) +-->
+<!--                (randomMinutes * 60 * 1000) +-->
+<!--                (randomSeconds * 1000));-->
 
-            return endTime;
-        }
+<!--            return endTime;-->
+<!--        }-->
 
-        // Get or set the end time
-        let endTime = localStorage.getItem('apokalistEndTime');
-        if (!endTime) {
-            endTime = setRandomCountdown().getTime();
-            localStorage.setItem('apokalistEndTime', endTime);
-        } else {
-            endTime = parseInt(endTime);
-        }
+<!--        // Get or set the end time-->
+<!--        let endTime = localStorage.getItem('apokalistEndTime');-->
+<!--        if (!endTime) {-->
+<!--            endTime = setRandomCountdown().getTime();-->
+<!--            localStorage.setItem('apokalistEndTime', endTime);-->
+<!--        } else {-->
+<!--            endTime = parseInt(endTime);-->
+<!--        }-->
 
-        // Update countdown
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const timeLeft = endTime - now;
+<!--        // Update countdown-->
+<!--        function updateCountdown() {-->
+<!--            const now = new Date().getTime();-->
+<!--            const timeLeft = endTime - now;-->
 
-            if (timeLeft <= 0) {
-                countdownEl.textContent = "THE END IS HERE";
-                countdownEl.style.color = "var(--danger)";
-                return;
-            }
+<!--            if (timeLeft <= 0) {-->
+<!--                countdownEl.textContent = "THE END IS HERE";-->
+<!--                countdownEl.style.color = "var(&#45;&#45;danger)";-->
+<!--                return;-->
+<!--            }-->
 
-            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+<!--            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));-->
+<!--            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));-->
+<!--            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));-->
+<!--            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);-->
 
-            countdownEl.textContent = `Estimated time remaining: ${days}d ${hours}h ${minutes}m ${seconds}s`;
-        }
+<!--            countdownEl.textContent = `Estimated time remaining: ${days}d ${hours}h ${minutes}m ${seconds}s`;-->
+<!--        }-->
 
-        // Update countdown every second
-        updateCountdown();
-        setInterval(updateCountdown, 1000);
+<!--        // Update countdown every second-->
+<!--        updateCountdown();-->
+<!--        setInterval(updateCountdown, 1000);-->
 
-        // Set today as the minimum date for the date input
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('task-date').min = today;
+<!--        // Set today as the minimum date for the date input-->
+<!--        const today = new Date().toISOString().split('T')[0];-->
+<!--        document.getElementById('task-date').min = today;-->
 
-        // Add task event listener
-        taskForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+<!--        // Add task event listener-->
+<!--        taskForm.addEventListener('submit', function(e) {-->
+<!--            e.preventDefault();-->
 
-            const titleInput = document.getElementById('task-title');
-            const descriptionInput = document.getElementById('task-description');
-            const dateInput = document.getElementById('task-date');
+<!--            const titleInput = document.getElementById('task-title');-->
+<!--            const descriptionInput = document.getElementById('task-description');-->
+<!--            const dateInput = document.getElementById('task-date');-->
 
-            const newTask = {
-                id: Date.now().toString(),
-                title: titleInput.value.trim(),
-                description: descriptionInput.value.trim(),
-                date: dateInput.value,
-                completed: false,
-                createdAt: new Date().toISOString()
-            };
+<!--            const newTask = {-->
+<!--                id: Date.now().toString(),-->
+<!--                title: titleInput.value.trim(),-->
+<!--                description: descriptionInput.value.trim(),-->
+<!--                date: dateInput.value,-->
+<!--                completed: false,-->
+<!--                createdAt: new Date().toISOString()-->
+<!--            };-->
 
-            tasks.push(newTask);
-            saveTasks();
-            renderTasks();
+<!--            tasks.push(newTask);-->
+<!--            saveTasks();-->
+<!--            renderTasks();-->
 
-            // Reset form
-            taskForm.reset();
+<!--            // Reset form-->
+<!--            taskForm.reset();-->
 
-            // Add a glitch effect to the title
-            const title = document.querySelector('h1');
-            title.classList.add('glitch-effect');
-            setTimeout(() => {
-                title.classList.remove('glitch-effect');
-            }, 1000);
-        });
+<!--            // Add a glitch effect to the title-->
+<!--            const title = document.querySelector('h1');-->
+<!--            title.classList.add('glitch-effect');-->
+<!--            setTimeout(() => {-->
+<!--                title.classList.remove('glitch-effect');-->
+<!--            }, 1000);-->
+<!--        });-->
 
-        // Sort tasks event listener
-        sortSelect.addEventListener('change', function() {
-            currentSort = this.value;
-            renderTasks();
-        });
+<!--        // Sort tasks event listener-->
+<!--        sortSelect.addEventListener('change', function() {-->
+<!--            currentSort = this.value;-->
+<!--            renderTasks();-->
+<!--        });-->
 
-        // Add first task button event listener
-        addFirstTaskBtn.addEventListener('click', function() {
-            document.getElementById('task-title').focus();
-        });
+<!--        // Add first task button event listener-->
+<!--        addFirstTaskBtn.addEventListener('click', function() {-->
+<!--            document.getElementById('task-title').focus();-->
+<!--        });-->
 
-        // Close edit modal event listeners
-        closeEditModalBtn.addEventListener('click', closeEditModal);
-        cancelEditBtn.addEventListener('click', closeEditModal);
+<!--        // Close edit modal event listeners-->
+<!--        closeEditModalBtn.addEventListener('click', closeEditModal);-->
+<!--        cancelEditBtn.addEventListener('click', closeEditModal);-->
 
-        // Close modal when clicking outside
-        editModal.addEventListener('click', function(e) {
-            if (e.target === editModal) {
-                closeEditModal();
-            }
-        });
+<!--        // Close modal when clicking outside-->
+<!--        editModal.addEventListener('click', function(e) {-->
+<!--            if (e.target === editModal) {-->
+<!--                closeEditModal();-->
+<!--            }-->
+<!--        });-->
 
-        // Edit task form submit event listener
-        editForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+<!--        // Edit task form submit event listener-->
+<!--        editForm.addEventListener('submit', function(e) {-->
+<!--            e.preventDefault();-->
 
-            const taskId = document.getElementById('edit-task-id').value;
-            const taskIndex = tasks.findIndex(task => task.id === taskId);
+<!--            const taskId = document.getElementById('edit-task-id').value;-->
+<!--            const taskIndex = tasks.findIndex(task => task.id === taskId);-->
 
-            if (taskIndex !== -1) {
-                tasks[taskIndex].title = document.getElementById('edit-task-title').value.trim();
-                tasks[taskIndex].description = document.getElementById('edit-task-description').value.trim();
-                tasks[taskIndex].date = document.getElementById('edit-task-date').value;
+<!--            if (taskIndex !== -1) {-->
+<!--                tasks[taskIndex].title = document.getElementById('edit-task-title').value.trim();-->
+<!--                tasks[taskIndex].description = document.getElementById('edit-task-description').value.trim();-->
+<!--                tasks[taskIndex].date = document.getElementById('edit-task-date').value;-->
 
-                saveTasks();
-                renderTasks();
-                closeEditModal();
-            }
-        });
+<!--                saveTasks();-->
+<!--                renderTasks();-->
+<!--                closeEditModal();-->
+<!--            }-->
+<!--        });-->
 
-        // Function to save tasks to localStorage
-        function saveTasks() {
-            localStorage.setItem('apokalistTasks', JSON.stringify(tasks));
-            updateTaskCounter();
-        }
+<!--        // Function to save tasks to localStorage-->
+<!--        function saveTasks() {-->
+<!--            localStorage.setItem('apokalistTasks', JSON.stringify(tasks));-->
+<!--            updateTaskCounter();-->
+<!--        }-->
 
-        // Function to update task counter
-        function updateTaskCounter() {
-            const remainingTasks = tasks.filter(task => !task.completed).length;
-            taskCounter.textContent = `${remainingTasks} task${remainingTasks !== 1 ? 's' : ''} remaining`;
-        }
+<!--        // Function to update task counter-->
+<!--        function updateTaskCounter() {-->
+<!--            const remainingTasks = tasks.filter(task => !task.completed).length;-->
+<!--            taskCounter.textContent = `${remainingTasks} task${remainingTasks !== 1 ? 's' : ''} remaining`;-->
+<!--        }-->
 
-        // Function to sort tasks
-        function sortTasks(tasksToSort) {
-            switch(currentSort) {
-                case 'date-asc':
-                    return tasksToSort.sort((a, b) => new Date(a.date) - new Date(b.date));
-                case 'date-desc':
-                    return tasksToSort.sort((a, b) => new Date(b.date) - new Date(a.date));
-                case 'added-desc':
-                    return tasksToSort.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                case 'added-asc':
-                    return tasksToSort.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-                default:
-                    return tasksToSort;
-            }
-        }
+<!--        // Function to sort tasks-->
+<!--        function sortTasks(tasksToSort) {-->
+<!--            switch(currentSort) {-->
+<!--                case 'date-asc':-->
+<!--                    return tasksToSort.sort((a, b) => new Date(a.date) - new Date(b.date));-->
+<!--                case 'date-desc':-->
+<!--                    return tasksToSort.sort((a, b) => new Date(b.date) - new Date(a.date));-->
+<!--                case 'added-desc':-->
+<!--                    return tasksToSort.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));-->
+<!--                case 'added-asc':-->
+<!--                    return tasksToSort.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));-->
+<!--                default:-->
+<!--                    return tasksToSort;-->
+<!--            }-->
+<!--        }-->
 
-        // Function to render tasks
-        function renderTasks() {
-            // Sort tasks
-            const sortedTasks = sortTasks([...tasks]);
+<!--        // Function to render tasks-->
+<!--        function renderTasks() {-->
+<!--            // Sort tasks-->
+<!--            const sortedTasks = sortTasks([...tasks]);-->
 
-            // Clear task list
-            taskList.innerHTML = '';
+<!--            // Clear task list-->
+<!--            taskList.innerHTML = '';-->
 
-            // Show/hide empty state
-            if (sortedTasks.length === 0) {
-                emptyState.style.display = 'block';
-                taskList.style.display = 'none';
-            } else {
-                emptyState.style.display = 'none';
-                taskList.style.display = 'block';
+<!--            // Show/hide empty state-->
+<!--            if (sortedTasks.length === 0) {-->
+<!--                emptyState.style.display = 'block';-->
+<!--                taskList.style.display = 'none';-->
+<!--            } else {-->
+<!--                emptyState.style.display = 'none';-->
+<!--                taskList.style.display = 'block';-->
 
-                // Render each task
-                sortedTasks.forEach(task => {
-                    const taskItem = document.createElement('li');
-                    taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;
-                    taskItem.dataset.id = task.id;
+<!--                // Render each task-->
+<!--                sortedTasks.forEach(task => {-->
+<!--                    const taskItem = document.createElement('li');-->
+<!--                    taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;-->
+<!--                    taskItem.dataset.id = task.id;-->
 
-                    // Format date
-                    const taskDate = new Date(task.date);
-                    const formattedDate = taskDate.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                    });
+<!--                    // Format date-->
+<!--                    const taskDate = new Date(task.date);-->
+<!--                    const formattedDate = taskDate.toLocaleDateString('en-US', {-->
+<!--                        year: 'numeric',-->
+<!--                        month: 'short',-->
+<!--                        day: 'numeric'-->
+<!--                    });-->
 
-                    // Calculate days left
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    const daysLeft = Math.ceil((taskDate - today) / (1000 * 60 * 60 * 24));
+<!--                    // Calculate days left-->
+<!--                    const today = new Date();-->
+<!--                    today.setHours(0, 0, 0, 0);-->
+<!--                    const daysLeft = Math.ceil((taskDate - today) / (1000 * 60 * 60 * 24));-->
 
-                    let daysLeftText = '';
-                    if (daysLeft < 0) {
-                        daysLeftText = `<span style="color: var(--danger);">${Math.abs(daysLeft)} days overdue</span>`;
-                    } else if (daysLeft === 0) {
-                        daysLeftText = `<span style="color: var(--accent);">Due today</span>`;
-                    } else {
-                        daysLeftText = `<span>${daysLeft} days left</span>`;
-                    }
+<!--                    let daysLeftText = '';-->
+<!--                    if (daysLeft < 0) {-->
+<!--                        daysLeftText = `<span style="color: var(&#45;&#45;danger);">${Math.abs(daysLeft)} days overdue</span>`;-->
+<!--                    } else if (daysLeft === 0) {-->
+<!--                        daysLeftText = `<span style="color: var(&#45;&#45;accent);">Due today</span>`;-->
+<!--                    } else {-->
+<!--                        daysLeftText = `<span>${daysLeft} days left</span>`;-->
+<!--                    }-->
 
-                    taskItem.innerHTML = `
-                            <div class="task-header">
-                                <div class="task-title">${task.title}</div>
-                                <div class="task-date">
-                                    ${formattedDate} • ${daysLeftText}
-                                </div>
-                            </div>
-                            <div class="task-content">
-                                <div class="task-description">${task.description || 'No description provided.'}</div>
-                                <div class="task-actions">
-                                    <button class="btn btn-sm ${task.completed ? '' : 'btn-success'} toggle-complete-btn">
-                                        ${task.completed ? 'Undo' : 'Complete'}
-                                    </button>
-                                    <button class="btn btn-sm edit-btn">Edit</button>
-                                    <button class="btn btn-sm btn-danger delete-btn">Delete</button>
-                                </div>
-                            </div>
-                        `;
+<!--                    taskItem.innerHTML = `-->
+<!--                            <div class="task-header">-->
+<!--                                <div class="task-title">${task.title}</div>-->
+<!--                                <div class="task-date">-->
+<!--                                    ${formattedDate} • ${daysLeftText}-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="task-content">-->
+<!--                                <div class="task-description">${task.description || 'No description provided.'}</div>-->
+<!--                                <div class="task-actions">-->
+<!--                                    <button class="btn btn-sm ${task.completed ? '' : 'btn-success'} toggle-complete-btn">-->
+<!--                                        ${task.completed ? 'Undo' : 'Complete'}-->
+<!--                                    </button>-->
+<!--                                    <button class="btn btn-sm edit-btn">Edit</button>-->
+<!--                                    <button class="btn btn-sm btn-danger delete-btn">Delete</button>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        `;-->
 
-                    taskList.appendChild(taskItem);
+<!--                    taskList.appendChild(taskItem);-->
 
-                    // Add event listeners to buttons
-                    const toggleCompleteBtn = taskItem.querySelector('.toggle-complete-btn');
-                    const editBtn = taskItem.querySelector('.edit-btn');
-                    const deleteBtn = taskItem.querySelector('.delete-btn');
+<!--                    // Add event listeners to buttons-->
+<!--                    const toggleCompleteBtn = taskItem.querySelector('.toggle-complete-btn');-->
+<!--                    const editBtn = taskItem.querySelector('.edit-btn');-->
+<!--                    const deleteBtn = taskItem.querySelector('.delete-btn');-->
 
-                    toggleCompleteBtn.addEventListener('click', function() {
-                        toggleTaskComplete(task.id);
-                    });
+<!--                    toggleCompleteBtn.addEventListener('click', function() {-->
+<!--                        toggleTaskComplete(task.id);-->
+<!--                    });-->
 
-                    editBtn.addEventListener('click', function() {
-                        openEditModal(task.id);
-                    });
+<!--                    editBtn.addEventListener('click', function() {-->
+<!--                        openEditModal(task.id);-->
+<!--                    });-->
 
-                    deleteBtn.addEventListener('click', function() {
-                        deleteTask(task.id);
-                    });
-                });
-            }
+<!--                    deleteBtn.addEventListener('click', function() {-->
+<!--                        deleteTask(task.id);-->
+<!--                    });-->
+<!--                });-->
+<!--            }-->
 
-            updateTaskCounter();
-        }
+<!--            updateTaskCounter();-->
+<!--        }-->
 
-        // Function to toggle task complete
-        function toggleTaskComplete(taskId) {
-            const taskIndex = tasks.findIndex(task => task.id === taskId);
+<!--        // Function to toggle task complete-->
+<!--        function toggleTaskComplete(taskId) {-->
+<!--            const taskIndex = tasks.findIndex(task => task.id === taskId);-->
 
-            if (taskIndex !== -1) {
-                tasks[taskIndex].completed = !tasks[taskIndex].completed;
-                saveTasks();
-                renderTasks();
-            }
-        }
+<!--            if (taskIndex !== -1) {-->
+<!--                tasks[taskIndex].completed = !tasks[taskIndex].completed;-->
+<!--                saveTasks();-->
+<!--                renderTasks();-->
+<!--            }-->
+<!--        }-->
 
-        // Function to delete task
-        function deleteTask(taskId) {
-            tasks = tasks.filter(task => task.id !== taskId);
-            saveTasks();
-            renderTasks();
-        }
+<!--        // Function to delete task-->
+<!--        function deleteTask(taskId) {-->
+<!--            tasks = tasks.filter(task => task.id !== taskId);-->
+<!--            saveTasks();-->
+<!--            renderTasks();-->
+<!--        }-->
 
-        // Function to open edit modal
-        function openEditModal(taskId) {
-            const task = tasks.find(task => task.id === taskId);
+<!--        // Function to open edit modal-->
+<!--        function openEditModal(taskId) {-->
+<!--            const task = tasks.find(task => task.id === taskId);-->
 
-            if (task) {
-                document.getElementById('edit-task-id').value = task.id;
-                document.getElementById('edit-task-title').value = task.title;
-                document.getElementById('edit-task-description').value = task.description;
-                document.getElementById('edit-task-date').value = task.date;
+<!--            if (task) {-->
+<!--                document.getElementById('edit-task-id').value = task.id;-->
+<!--                document.getElementById('edit-task-title').value = task.title;-->
+<!--                document.getElementById('edit-task-description').value = task.description;-->
+<!--                document.getElementById('edit-task-date').value = task.date;-->
 
-                editModal.classList.add('active');
-            }
-        }
+<!--                editModal.classList.add('active');-->
+<!--            }-->
+<!--        }-->
 
-        // Function to close edit modal
-        function closeEditModal() {
-            editModal.classList.remove('active');
-        }
+<!--        // Function to close edit modal-->
+<!--        function closeEditModal() {-->
+<!--            editModal.classList.remove('active');-->
+<!--        }-->
 
-        // Initial render
-        renderTasks();
-    });
-</script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'942c1071c6633bb7',t:'MTc0Nzc0NjUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border: medium; visibility: hidden;"></iframe>
-
+<!--        // Initial render-->
+<!--        renderTasks();-->
+<!--    });-->
+<!--</script>-->
+<!--<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'942c1071c6633bb7',t:'MTc0Nzc0NjUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border: medium; visibility: hidden;"></iframe>-->
+<script src="/js/app.js" defer></script>
 <lt-toolbar contenteditable="false" style="display: none;" data-lt-adjust-appearance="true" data-lt-force-appearance="dark"><lt-div class="lt-toolbar__wrapper" style="left: 1224px; position: absolute !important; top: 377px !important; bottom: auto !important; z-index: auto;"><lt-div class="lt-toolbar__status-icon lt-toolbar__status-icon--has-no-errors" title=""></lt-div><lt-div class="lt-toolbar__premium-icon-dot"></lt-div></lt-div></lt-toolbar></body></html>

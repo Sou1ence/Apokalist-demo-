@@ -1,11 +1,7 @@
 package com.apokalist.repository;
 
+import com.apokalist.model.Task;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-
-public class TaskRepository {
-    // This is a placeholder for the TaskRepository class.
-    // In a real application, this would extend a Spring Data JPA repository interface.
-    // For example:
-    // public interface TaskRepository extends JpaRepository<Task, Long> {
-    // }
+public interface TaskRepository extends JpaRepository<Task, Long> {
 }
