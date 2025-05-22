@@ -1,4 +1,4 @@
-package com.apokalist.apokalist;
+package com.apokalist;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

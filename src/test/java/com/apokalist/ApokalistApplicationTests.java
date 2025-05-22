@@ -1,4 +1,4 @@
-package com.apokalist.apokalist;
+package com.apokalist;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

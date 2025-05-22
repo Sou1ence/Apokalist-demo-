@@ -1,0 +1,807 @@
+<html lang="en" data-lt-installed="true"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apokalist: To-Do List Before The End</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&amp;family=Roboto+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #2c2c2a;
+            --bg-form: #3f3f3c;
+            --bg-info: #272726;
+            --text-main: #a19e96;
+            --accent: #ca7b5d;
+            --text-secondary: #7f72c3;
+            --text-light: #dfdfdc;
+            --danger: #b33a3a;
+            --success: #4a9e5c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Mono', monospace;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(202, 123, 93, 0.5);
+        }
+
+        .subtitle {
+            color: var(--accent);
+            font-size: 1rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .countdown {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .add-task-container {
+            background-color: var(--bg-form);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(202, 123, 93, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: var(--bg-info);
+            border: 1px solid rgba(127, 114, 195, 0.3);
+            color: var(--text-light);
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(202, 123, 93, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: var(--text-light);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            background-color: #d68b6d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #c94b4b;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #5ab96c;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .sort-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sort-container select {
+            width: auto;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            background-color: var(--bg-info);
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border-left: 4px solid var(--accent);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .task-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .task-item.completed {
+            border-left-color: var(--success);
+            opacity: 0.8;
+        }
+
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .task-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(127, 114, 195, 0.2);
+        }
+
+        .task-title {
+            color: var(--text-light);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-right: 1rem;
+        }
+
+        .task-date {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .task-content {
+            padding: 1rem;
+        }
+
+        .task-description {
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: var(--bg-form);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            padding: 2rem;
+            position: relative;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(202, 123, 93, 0.3);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            color: var(--text-light);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .modal-footer {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+
+        .empty-state-text {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .radiation-icon {
+            display: inline-block;
+            margin-right: 0.5rem;
+            color: var(--accent);
+        }
+
+        .task-counter {
+            background-color: var(--bg-info);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border: 1px solid rgba(127, 114, 195, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .task-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .task-date {
+                margin-top: 0.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .sort-container {
+                justify-content: space-between;
+            }
+        }
+
+        /* Apocalyptic decorations */
+        .radiation-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(202, 123, 93, 0.05) 0%, rgba(44, 44, 42, 0) 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glitch-effect {
+            animation: glitch 10s infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 0 0 10px rgba(202, 123, 93, 0.5); }
+            1% { text-shadow: -3px 0 0 rgba(202, 123, 93, 0.7), 3px 0 0 rgba(127, 114, 195, 0.7); }
+            2% { text-shadow: 3px 0 0 rgba(202, 123, 93, 0.7), -3px 0 0 rgba(127, 114, 195, 0.7); }
+            3% { text-shadow: 0 0 10px rgba(202, 123, 93, 0.5); }
+            99% { text-shadow: 0 0 10px rgba(202, 123, 93, 0.5); }
+            100% { text-shadow: 0 0 10px rgba(202, 123, 93, 0.5); }
+        }
+    </style>
+</head>
+<body>
+<div class="radiation-bg"></div>
+<div class="container">
+    <header>
+        <h1 class="">Apokalist</h1>
+        <p class="subtitle">To-Do List Before The End</p>
+        <div class="countdown" id="countdown">Estimated time remaining: 183d 5h 31m 35s</div>
+    </header>
+
+    <div class="add-task-container">
+        <form id="add-task-form">
+            <div class="form-group">
+                <label for="task-title">Task Title</label>
+                <input type="text" id="task-title" placeholder="What needs to be done?" required="">
+            </div>
+            <div class="form-group">
+                <label for="task-description">Description</label>
+                <textarea id="task-description" placeholder="Add details about your task..." data-lt-tmp-id="lt-446126" spellcheck="false" data-gramm="false"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="task-date">Due Date</label>
+                <input type="date" id="task-date" required="" min="2025-05-20">
+            </div>
+            <button type="submit" class="btn">
+                <span class="radiation-icon">☢</span> Add Task
+            </button>
+        </form>
+    </div>
+
+    <div class="controls">
+        <div class="task-counter" id="task-counter">0 tasks remaining</div>
+        <div class="sort-container">
+            <label for="sort-tasks">Sort by:</label>
+            <select id="sort-tasks">
+                <option value="date-asc">Date (Earliest First)</option>
+                <option value="date-desc">Date (Latest First)</option>
+                <option value="added-desc">Recently Added</option>
+                <option value="added-asc">Oldest Added</option>
+            </select>
+        </div>
+    </div>
+
+    <ul class="task-list" id="task-list" style="display: block;"><li class="task-item completed" data-id="1747746588321">
+        <div class="task-header">
+            <div class="task-title">фыв123123213 1фыв</div>
+            <div class="task-date">
+                May 20, 2026 • <span>366 days left</span>
+            </div>
+        </div>
+        <div class="task-content">
+            <div class="task-description">фыв</div>
+            <div class="task-actions">
+                <button class="btn btn-sm  toggle-complete-btn">
+                    Undo
+                </button>
+                <button class="btn btn-sm edit-btn">Edit</button>
+                <button class="btn btn-sm btn-danger delete-btn">Delete</button>
+            </div>
+        </div>
+    </li></ul>
+
+    <div id="empty-state" class="empty-state" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <p class="empty-state-text">No tasks yet. The world awaits your final plans.</p>
+        <button class="btn" id="add-first-task">
+            <span class="radiation-icon">☢</span> Add Your First Task
+        </button>
+    </div>
+</div>
+
+<!-- Edit Task Modal -->
+<div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Task</h3>
+            <button class="close-modal" id="close-edit-modal">×</button>
+        </div>
+        <form id="edit-task-form">
+            <input type="hidden" id="edit-task-id" value="1747746588321">
+            <div class="form-group">
+                <label for="edit-task-title">Task Title</label>
+                <input type="text" id="edit-task-title" required="">
+            </div>
+            <div class="form-group">
+                <label for="edit-task-description">Description</label>
+                <textarea id="edit-task-description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="edit-task-date">Due Date</label>
+                <input type="date" id="edit-task-date" required="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="cancel-edit">Cancel</button>
+                <button type="submit" class="btn">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize tasks from localStorage or create empty array
+        let tasks = JSON.parse(localStorage.getItem('apokalistTasks')) || [];
+        let currentSort = 'date-asc';
+
+        // DOM Elements
+        const taskForm = document.getElementById('add-task-form');
+        const taskList = document.getElementById('task-list');
+        const taskCounter = document.getElementById('task-counter');
+        const emptyState = document.getElementById('empty-state');
+        const addFirstTaskBtn = document.getElementById('add-first-task');
+        const sortSelect = document.getElementById('sort-tasks');
+        const editModal = document.getElementById('edit-modal');
+        const editForm = document.getElementById('edit-task-form');
+        const closeEditModalBtn = document.getElementById('close-edit-modal');
+        const cancelEditBtn = document.getElementById('cancel-edit');
+        const countdownEl = document.getElementById('countdown');
+
+        // Set a random apocalyptic countdown
+        function setRandomCountdown() {
+            const now = new Date();
+            const randomDays = Math.floor(Math.random() * 365) + 1;
+            const randomHours = Math.floor(Math.random() * 24);
+            const randomMinutes = Math.floor(Math.random() * 60);
+            const randomSeconds = Math.floor(Math.random() * 60);
+
+            const endTime = new Date(now.getTime() +
+                (randomDays * 24 * 60 * 60 * 1000) +
+                (randomHours * 60 * 60 * 1000) +
+                (randomMinutes * 60 * 1000) +
+                (randomSeconds * 1000));
+
+            return endTime;
+        }
+
+        // Get or set the end time
+        let endTime = localStorage.getItem('apokalistEndTime');
+        if (!endTime) {
+            endTime = setRandomCountdown().getTime();
+            localStorage.setItem('apokalistEndTime', endTime);
+        } else {
+            endTime = parseInt(endTime);
+        }
+
+        // Update countdown
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const timeLeft = endTime - now;
+
+            if (timeLeft <= 0) {
+                countdownEl.textContent = "THE END IS HERE";
+                countdownEl.style.color = "var(--danger)";
+                return;
+            }
+
+            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            countdownEl.textContent = `Estimated time remaining: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        // Update countdown every second
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Set today as the minimum date for the date input
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('task-date').min = today;
+
+        // Add task event listener
+        taskForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const titleInput = document.getElementById('task-title');
+            const descriptionInput = document.getElementById('task-description');
+            const dateInput = document.getElementById('task-date');
+
+            const newTask = {
+                id: Date.now().toString(),
+                title: titleInput.value.trim(),
+                description: descriptionInput.value.trim(),
+                date: dateInput.value,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            tasks.push(newTask);
+            saveTasks();
+            renderTasks();
+
+            // Reset form
+            taskForm.reset();
+
+            // Add a glitch effect to the title
+            const title = document.querySelector('h1');
+            title.classList.add('glitch-effect');
+            setTimeout(() => {
+                title.classList.remove('glitch-effect');
+            }, 1000);
+        });
+
+        // Sort tasks event listener
+        sortSelect.addEventListener('change', function() {
+            currentSort = this.value;
+            renderTasks();
+        });
+
+        // Add first task button event listener
+        addFirstTaskBtn.addEventListener('click', function() {
+            document.getElementById('task-title').focus();
+        });
+
+        // Close edit modal event listeners
+        closeEditModalBtn.addEventListener('click', closeEditModal);
+        cancelEditBtn.addEventListener('click', closeEditModal);
+
+        // Close modal when clicking outside
+        editModal.addEventListener('click', function(e) {
+            if (e.target === editModal) {
+                closeEditModal();
+            }
+        });
+
+        // Edit task form submit event listener
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const taskId = document.getElementById('edit-task-id').value;
+            const taskIndex = tasks.findIndex(task => task.id === taskId);
+
+            if (taskIndex !== -1) {
+                tasks[taskIndex].title = document.getElementById('edit-task-title').value.trim();
+                tasks[taskIndex].description = document.getElementById('edit-task-description').value.trim();
+                tasks[taskIndex].date = document.getElementById('edit-task-date').value;
+
+                saveTasks();
+                renderTasks();
+                closeEditModal();
+            }
+        });
+
+        // Function to save tasks to localStorage
+        function saveTasks() {
+            localStorage.setItem('apokalistTasks', JSON.stringify(tasks));
+            updateTaskCounter();
+        }
+
+        // Function to update task counter
+        function updateTaskCounter() {
+            const remainingTasks = tasks.filter(task => !task.completed).length;
+            taskCounter.textContent = `${remainingTasks} task${remainingTasks !== 1 ? 's' : ''} remaining`;
+        }
+
+        // Function to sort tasks
+        function sortTasks(tasksToSort) {
+            switch(currentSort) {
+                case 'date-asc':
+                    return tasksToSort.sort((a, b) => new Date(a.date) - new Date(b.date));
+                case 'date-desc':
+                    return tasksToSort.sort((a, b) => new Date(b.date) - new Date(a.date));
+                case 'added-desc':
+                    return tasksToSort.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                case 'added-asc':
+                    return tasksToSort.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                default:
+                    return tasksToSort;
+            }
+        }
+
+        // Function to render tasks
+        function renderTasks() {
+            // Sort tasks
+            const sortedTasks = sortTasks([...tasks]);
+
+            // Clear task list
+            taskList.innerHTML = '';
+
+            // Show/hide empty state
+            if (sortedTasks.length === 0) {
+                emptyState.style.display = 'block';
+                taskList.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                taskList.style.display = 'block';
+
+                // Render each task
+                sortedTasks.forEach(task => {
+                    const taskItem = document.createElement('li');
+                    taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;
+                    taskItem.dataset.id = task.id;
+
+                    // Format date
+                    const taskDate = new Date(task.date);
+                    const formattedDate = taskDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+
+                    // Calculate days left
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const daysLeft = Math.ceil((taskDate - today) / (1000 * 60 * 60 * 24));
+
+                    let daysLeftText = '';
+                    if (daysLeft < 0) {
+                        daysLeftText = `<span style="color: var(--danger);">${Math.abs(daysLeft)} days overdue</span>`;
+                    } else if (daysLeft === 0) {
+                        daysLeftText = `<span style="color: var(--accent);">Due today</span>`;
+                    } else {
+                        daysLeftText = `<span>${daysLeft} days left</span>`;
+                    }
+
+                    taskItem.innerHTML = `
+                            <div class="task-header">
+                                <div class="task-title">${task.title}</div>
+                                <div class="task-date">
+                                    ${formattedDate} • ${daysLeftText}
+                                </div>
+                            </div>
+                            <div class="task-content">
+                                <div class="task-description">${task.description || 'No description provided.'}</div>
+                                <div class="task-actions">
+                                    <button class="btn btn-sm ${task.completed ? '' : 'btn-success'} toggle-complete-btn">
+                                        ${task.completed ? 'Undo' : 'Complete'}
+                                    </button>
+                                    <button class="btn btn-sm edit-btn">Edit</button>
+                                    <button class="btn btn-sm btn-danger delete-btn">Delete</button>
+                                </div>
+                            </div>
+                        `;
+
+                    taskList.appendChild(taskItem);
+
+                    // Add event listeners to buttons
+                    const toggleCompleteBtn = taskItem.querySelector('.toggle-complete-btn');
+                    const editBtn = taskItem.querySelector('.edit-btn');
+                    const deleteBtn = taskItem.querySelector('.delete-btn');
+
+                    toggleCompleteBtn.addEventListener('click', function() {
+                        toggleTaskComplete(task.id);
+                    });
+
+                    editBtn.addEventListener('click', function() {
+                        openEditModal(task.id);
+                    });
+
+                    deleteBtn.addEventListener('click', function() {
+                        deleteTask(task.id);
+                    });
+                });
+            }
+
+            updateTaskCounter();
+        }
+
+        // Function to toggle task complete
+        function toggleTaskComplete(taskId) {
+            const taskIndex = tasks.findIndex(task => task.id === taskId);
+
+            if (taskIndex !== -1) {
+                tasks[taskIndex].completed = !tasks[taskIndex].completed;
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        // Function to delete task
+        function deleteTask(taskId) {
+            tasks = tasks.filter(task => task.id !== taskId);
+            saveTasks();
+            renderTasks();
+        }
+
+        // Function to open edit modal
+        function openEditModal(taskId) {
+            const task = tasks.find(task => task.id === taskId);
+
+            if (task) {
+                document.getElementById('edit-task-id').value = task.id;
+                document.getElementById('edit-task-title').value = task.title;
+                document.getElementById('edit-task-description').value = task.description;
+                document.getElementById('edit-task-date').value = task.date;
+
+                editModal.classList.add('active');
+            }
+        }
+
+        // Function to close edit modal
+        function closeEditModal() {
+            editModal.classList.remove('active');
+        }
+
+        // Initial render
+        renderTasks();
+    });
+</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'942c1071c6633bb7',t:'MTc0Nzc0NjUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><iframe height="1" width="1" style="position: absolute; top: 0px; left: 0px; border: medium; visibility: hidden;"></iframe>
+
+<lt-toolbar contenteditable="false" style="display: none;" data-lt-adjust-appearance="true" data-lt-force-appearance="dark"><lt-div class="lt-toolbar__wrapper" style="left: 1224px; position: absolute !important; top: 377px !important; bottom: auto !important; z-index: auto;"><lt-div class="lt-toolbar__status-icon lt-toolbar__status-icon--has-no-errors" title=""></lt-div><lt-div class="lt-toolbar__premium-icon-dot"></lt-div></lt-div></lt-toolbar></body></html>
