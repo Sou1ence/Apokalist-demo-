@@ -29,8 +29,14 @@ function setupEventListeners() {
         }
     });
 
-    // Сортировка
     document.getElementById('sort-tasks').addEventListener('change', loadTasks);
+
+    const editForm = document.getElementById('edit-task-form');
+    if (editForm) {
+        editForm.addEventListener('submit', handleEditSubmit);
+    } else {
+        console.error("Edit form not found! Check if element with id='edit-task-form' exists in HTML.");
+    }
 }
 
 async function loadTasks() {
@@ -141,13 +147,11 @@ async function openEditModal(id) {
         const task = currentTasks.find(t => t.id == id);
         if (!task) return;
 
-        // Заполняем форму редактирования
         document.getElementById('edit-task-id').value = task.id;
         document.getElementById('edit-task-title').value = task.title;
         document.getElementById('edit-task-description').value = task.description || '';
         document.getElementById('edit-task-date').value = task.dueDate.split('T')[0];
 
-        // Показываем модалку
         document.getElementById('edit-modal').classList.add('active');
     } catch (error) {
         console.error("Error opening edit modal:", error);
@@ -155,16 +159,21 @@ async function openEditModal(id) {
     }
 }
 
-// Обработчик для формы редактирования (добавь в setupEventListeners если нужно)
 window.handleEditSubmit = async function(e) {
     e.preventDefault();
 
     try {
+        const task = currentTasks.find(t => t.id == document.getElementById('edit-task-id').value);
+        if (!task) {
+            throw new Error("Task not found in currentTasks");
+        }
+
         const updatedTask = {
             id: document.getElementById('edit-task-id').value,
             title: document.getElementById('edit-task-title').value,
             description: document.getElementById('edit-task-description').value,
-            dueDate: document.getElementById('edit-task-date').value
+            dueDate: document.getElementById('edit-task-date').value,
+            completed: task.completed
         };
 
         const response = await fetch(`${API_URL}/${updatedTask.id}`, {
@@ -173,13 +182,16 @@ window.handleEditSubmit = async function(e) {
             body: JSON.stringify(updatedTask)
         });
 
-        if (!response.ok) throw new Error("Failed to update task");
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to update task: ${response.status} ${errorText}`);
+        }
 
         closeEditModal();
         await loadTasks();
     } catch (error) {
         console.error("Error updating task:", error);
-        alert("Failed to update task.");
+        alert("cannot update this task< sorry : " + error.message);
     }
 }
 
@@ -209,9 +221,12 @@ function getDateLabelClass(dueDate) {
     return daysLeft < 0 ? "text-danger" : daysLeft === 0 ? "text-warning" : "";
 }
 
-// Глобальные функции для вызова из HTML
+// Global functions for event handlers
 window.toggleComplete = toggleComplete;
 window.deleteTask = deleteTask;
 window.openEditModal = openEditModal;
 window.closeEditModal = closeEditModal;
 window.handleEditSubmit = handleEditSubmit;
+
+
+

@@ -56,4 +56,12 @@ public class TaskController {
     public void delete(@PathVariable Long id) {
         repository.deleteById(id);
     }
+
+    @PatchMapping("/{id}")
+    public Task updateCompleted(@PathVariable Long id, @RequestBody Task taskUpdate) {
+        Task existingTask = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        existingTask.setCompleted(taskUpdate.isCompleted());
+        return repository.save(existingTask);
+    }
 }
