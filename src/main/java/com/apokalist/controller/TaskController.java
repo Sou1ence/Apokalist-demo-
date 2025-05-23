@@ -18,7 +18,7 @@ public class TaskController {
 
     @GetMapping
     public List<Task> getAll(@RequestParam(required = false) String sortBy) {
-        Sort sort = Sort.unsorted(); // Domyślnie bez sortowania
+        Sort sort = Sort.unsorted();
         if (sortBy != null) {
             switch (sortBy) {
                 case "date-asc":
@@ -34,7 +34,7 @@ public class TaskController {
                     sort = Sort.by("id").descending();
                     break;
                 default:
-                    sort = Sort.by("id").ascending(); // Domyślne sortowanie, np. po ID rosnąco
+                    sort = Sort.by("id").ascending();
                     break;
             }
         }
