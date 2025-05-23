@@ -2,6 +2,7 @@ package com.apokalist.controller;
 
 import com.apokalist.model.Task;
 import com.apokalist.repository.TaskRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,16 +18,27 @@ public class TaskController {
 
     @GetMapping
     public List<Task> getAll(@RequestParam(required = false) String sortBy) {
-        List<Task> tasks = repository.findAll();
-
+        Sort sort = Sort.unsorted(); // Domyślnie bez sortowania
         if (sortBy != null) {
-            tasks.sort((a, b) ->
-                    "date-asc".equals(sortBy)
-                            ? a.getDueDate().compareTo(b.getDueDate())
-                            : b.getDueDate().compareTo(a.getDueDate())
-            );
+            switch (sortBy) {
+                case "date-asc":
+                    sort = Sort.by("dueDate").ascending();
+                    break;
+                case "date-desc":
+                    sort = Sort.by("dueDate").descending();
+                    break;
+                case "added-asc":
+                    sort = Sort.by("id").ascending();
+                    break;
+                case "added-desc":
+                    sort = Sort.by("id").descending();
+                    break;
+                default:
+                    sort = Sort.by("id").ascending(); // Domyślne sortowanie, np. po ID rosnąco
+                    break;
+            }
         }
-        return tasks;
+        return repository.findAll(sort);
     }
 
     @PostMapping

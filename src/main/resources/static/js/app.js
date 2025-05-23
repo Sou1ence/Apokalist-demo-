@@ -1,18 +1,25 @@
-const API_URL = '/data';
+const API_URL = 'http://localhost:8081/data';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    await loadTasks();
+    try {
+        await loadTasks();
+    } catch (error) {
+        console.error("Failed to load tasks:", error);
+    }
 
-    // Обработчик формы добавления
     document.getElementById('add-task-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        await createTask({
-            title: document.getElementById('task-title').value,
-            description: document.getElementById('task-description').value,
-            dueDate: document.getElementById('task-date').value,
-            completed: false
-        });
-        await loadTasks();
+        try {
+            await createTask({
+                title: document.getElementById('task-title').value,
+                description: document.getElementById('task-description').value,
+                dueDate: document.getElementById('task-date').value,
+                completed: false
+            });
+            await loadTasks();
+        } catch (error) {
+            console.error("Error:", error);
+        }
     });
 });
 
@@ -38,14 +45,37 @@ async function loadTasks() {
 }
 
 async function createTask(task) {
-    await fetch(API_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(task)
-    });
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(task)
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to create task: ${response.status} ${response.statusText}`);
+        }
+        const newTask = await response.json();
+        console.log('Task created:', newTask);
+        return newTask;
+    } catch (error) {
+        console.error('Error creating task:', error);
+        alert('Failed to add task. Please try again.');
+        throw error;
+    }
 }
 
 async function deleteTask(id) {
     await fetch(`${API_URL}/${id}`, {method: 'DELETE'});
     await loadTasks();
+}
+
+function calculateDaysLeft(dueDate) {
+    const today = new Date();
+    const due = new Date(dueDate);
+    const diff = due - today;
+    const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+    if (daysLeft < 0) return `${Math.abs(daysLeft)} days overdue`;
+    if (daysLeft === 0) return "Due today";
+    return `${daysLeft} days left`;
 }
