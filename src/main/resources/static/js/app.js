@@ -6,9 +6,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         await loadTasks();
         setupEventListeners();
+
+        setInterval(updateCountdown, 1000);
     } catch (error) {
         console.error("Failed to load tasks:", error);
-        alert("Failed to load tasks. Please refresh the page.");
+        alert("Failed to load tasks... -_-) fking sqlite!!!!! im just tired");
     }
 });
 
@@ -25,7 +27,7 @@ function setupEventListeners() {
             await loadTasks();
         } catch (error) {
             console.error("Error:", error);
-            alert('Failed to add task. Please try again.');
+            alert('Hmm, i cant add this task. Try again, it could help (not really)');
         }
     });
 
@@ -35,7 +37,21 @@ function setupEventListeners() {
     if (editForm) {
         editForm.addEventListener('submit', handleEditSubmit);
     } else {
-        console.error("Edit form not found! Check if element with id='edit-task-form' exists in HTML.");
+        console.error("Edit form issue ");
+    }
+
+    const cancelEditBtn = document.getElementById('cancel-edit');
+    if (cancelEditBtn) {
+        cancelEditBtn.addEventListener('click', closeEditModal);
+    } else {
+        console.error("Cancel edit btn issue ");
+    }
+
+    const closeEditModalBtn = document.getElementById('close-edit-modal');
+    if (closeEditModalBtn) {
+        closeEditModalBtn.addEventListener('click', closeEditModal);
+    } else {
+        console.error("Close edit modal btn issue ");
     }
 }
 
@@ -49,6 +65,7 @@ async function loadTasks() {
         currentTasks = await response.json();
         renderTasks(currentTasks);
         updateTaskCounter();
+        updateCountdown();
     } catch (error) {
         console.error("Failed to load tasks:", error);
         throw error;
@@ -219,6 +236,38 @@ function calculateDaysLeft(dueDate) {
 function getDateLabelClass(dueDate) {
     const daysLeft = Math.ceil((new Date(dueDate) - new Date()) / (1000 * 60 * 60 * 24));
     return daysLeft < 0 ? "text-danger" : daysLeft === 0 ? "text-warning" : "";
+}
+
+function updateCountdown() {
+    const upcomingTasks = currentTasks
+        .filter(task => !task.completed && new Date(task.dueDate) > new Date())
+        .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+    if (upcomingTasks.length === 0) {
+        document.getElementById('countdown').textContent = "No upcoming tasks";
+        return;
+    }
+
+    const nearestTask = upcomingTasks[0];
+    const dueDate = new Date(nearestTask.dueDate);
+    const now = new Date();
+
+    // Calculate time difference in milliseconds
+    const diff = dueDate - now;
+
+    if (diff <= 0) {
+        document.getElementById('countdown').textContent = `${nearestTask.title} is due now!`;
+        return;
+    }
+
+    // Convert to days, hours, minutes, seconds
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById('countdown').textContent =
+        `Time until "${nearestTask.title}": ${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
 // Global functions for event handlers
