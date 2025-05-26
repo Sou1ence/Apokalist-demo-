@@ -146,7 +146,7 @@ async function toggleComplete(id) {
 }
 
 async function deleteTask(id) {
-    if (!confirm("Are you sure you want to delete this task?")) return;
+    // if (!confirm("Are you sure you want to delete this task?")) return;
 
     try {
         const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
@@ -269,6 +269,8 @@ function updateCountdown() {
     document.getElementById('countdown').textContent =
         `Time until "${nearestTask.title}": ${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
+
+
 
 // Global functions for event handlers
 window.toggleComplete = toggleComplete;

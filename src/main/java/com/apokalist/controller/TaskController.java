@@ -2,6 +2,9 @@ package com.apokalist.controller;
 
 import com.apokalist.model.Task;
 import com.apokalist.repository.TaskRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +17,12 @@ public class TaskController {
 
     public TaskController(TaskRepository repository) {
         this.repository = repository;
+    }
+
+
+    @GetMapping("/completed")
+    public Page<Task> getByCompleted(@RequestParam Boolean completed, Pageable pageable) {
+        return repository.findByCompleted(completed, (PageRequest) pageable);
     }
 
     @GetMapping
