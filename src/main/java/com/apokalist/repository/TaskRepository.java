@@ -6,5 +6,5 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    Page<Task> findByCompleted(Boolean completed, PageRequest pageable);
+//    Page<Task> findByCompleted(Boolean completed, PageRequest pageable);
 }

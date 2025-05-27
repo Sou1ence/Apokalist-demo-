@@ -2,9 +2,12 @@ const API_URL = 'http://localhost:8081/data';
 
 let currentTasks = [];
 
+
+
+// Initialize the app when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await loadTasks();
+        await loadTasks();     // tasks
         setupEventListeners();
 
         setInterval(updateCountdown, 1000);
@@ -14,6 +17,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+/**
+ * Sets up event listeners for form submissions and button clicks
+ *  + Handles adding
+ *  + Sorting tasks
+ *  + Editing tasks
+ *  + Canceling edits modal window
+ */
 function setupEventListeners() {
     document.getElementById('add-task-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -34,18 +44,20 @@ function setupEventListeners() {
     document.getElementById('sort-tasks').addEventListener('change', loadTasks);
 
     const editForm = document.getElementById('edit-task-form');
-    if (editForm) {
+    if (editForm)
         editForm.addEventListener('submit', handleEditSubmit);
-    } else {
+    else
         console.error("Edit form issue ");
-    }
 
+
+    // Cancel edit button and close edit modal button (x)
     const cancelEditBtn = document.getElementById('cancel-edit');
-    if (cancelEditBtn) {
+
+    if (cancelEditBtn)
         cancelEditBtn.addEventListener('click', closeEditModal);
-    } else {
-        console.error("Cancel edit btn issue ");
-    }
+     else
+       console.error("Cancel edit btn issue ");
+
 
     const closeEditModalBtn = document.getElementById('close-edit-modal');
     if (closeEditModalBtn) {
@@ -55,6 +67,11 @@ function setupEventListeners() {
     }
 }
 
+/**
+ * Loads tasks from the API and renders them in the task list
+ *
+ * @returns {Promise<void>}
+ */
 async function loadTasks() {
     try {
         const sortBy = document.getElementById('sort-tasks').value;
@@ -72,6 +89,11 @@ async function loadTasks() {
     }
 }
 
+/**
+ * Renders the list of tasks in the UI
+ *
+ * @param tasks {Array} - Array of task objects to render
+ */
 function renderTasks(tasks) {
     const taskList = document.getElementById('task-list');
     const emptyState = document.getElementById('empty-state');
@@ -84,6 +106,7 @@ function renderTasks(tasks) {
 
     emptyState.style.display = 'none';
     taskList.style.display = 'block';
+
 
     taskList.innerHTML = tasks.map(task => `
         <li class="task-item ${task.completed ? 'completed' : ''}" data-id="${task.id}">
