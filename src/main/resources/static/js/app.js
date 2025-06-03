@@ -199,6 +199,16 @@ async function openEditModal(id) {
     }
 }
 
+
+/**
+ * Handles the submission of the edit task form
+ * + Updates the task via API
+ * + Closes the modal
+ * + Reloads the tasks
+ *
+ * @param e {Event} - The form submission event
+ * @returns {Promise<void>}
+ */
 window.handleEditSubmit = async function(e) {
     e.preventDefault();
 
@@ -275,7 +285,7 @@ function updateCountdown() {
     const dueDate = new Date(nearestTask.dueDate);
     const now = new Date();
 
-    // Calculate time difference in milliseconds
+    // time diff
     const diff = dueDate - now;
 
     if (diff <= 0) {
@@ -283,7 +293,7 @@ function updateCountdown() {
         return;
     }
 
-    // Convert to days, hours, minutes, seconds
+    //Converting to days, hours, minutes, seconds
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));

@@ -12,7 +12,7 @@ timeout /t 10 /nobreak
 ECHO browser...
 start http://localhost:8081
 
-IF %ERRORLEVEL% NEQ 0 (
+IF %ERRORLEVEL 0 (
     ECHO Browser is down
     pause
     exit /b 1
